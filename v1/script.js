@@ -32,7 +32,9 @@ function createFactsList(dataArray){
     
     
     </li>`);
+    // eslint-disable-next-line no-undef
     html = htmlArr.join("");
+    // eslint-disable-next-line no-undef
     factsList.insertAdjacentHTML("afterbegin",html);
 }
 loadFacts();
