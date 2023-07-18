@@ -114,6 +114,7 @@ function NewFactForm({ setFacts, setShowForm }) {
   const [text, setText] = useState("");
   const [source, setSource] = useState("");
   const [category, setCategory] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
 
   function isValidHttpUrl(string) {
     let url;
@@ -127,20 +128,17 @@ function NewFactForm({ setFacts, setShowForm }) {
     return url.protocol === "http:" || url.protocol === "https:";
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     if (text && isValidHttpUrl(source) && category && text.length <= 200) {
-      const newFact = {
-        id: Math.round(Math.random() * 100000),
-        text,
-        source,
-        category,
-        votesInteresting: 0,
-        votesMindblowing: 0,
-        votesFalse: 0,
-        createdIn: new Date().getFullYear(),
-      };
-      setFacts((facts) => [newFact, ...facts]);
+      setIsUploading(true);
+      const { data: newFact, error } = await supabase
+        .from("facts")
+        .insert([{ text, source, category }])
+        .select();
+      setIsUploading(false);
+
+      if (!error) setFacts((facts) => [newFact[0], ...facts]);
       setText("");
       setSource("");
       setCategory("");
@@ -155,6 +153,7 @@ function NewFactForm({ setFacts, setShowForm }) {
         placeholder="Share a fact with the world..."
         value={text}
         onChange={(e) => setText(e.target.value)}
+        disabled={isUploading}
       />
 
       <span>{200 - text.length}</span>
@@ -163,8 +162,13 @@ function NewFactForm({ setFacts, setShowForm }) {
         placeholder="Trustworthy source..."
         value={source}
         onChange={(e) => setSource(e.target.value)}
+        disabled={isUploading}
       />
-      <select value={category} onChange={(e) => setCategory(e.target.value)}>
+      <select
+        value={category}
+        onChange={(e) => setCategory(e.target.value)}
+        disabled={isUploading}
+      >
         <option value="">Choose category:</option>
         {CATEGORIES.map((cat) => (
           <option key={cat.name} value={cat.name}>
@@ -172,7 +176,9 @@ function NewFactForm({ setFacts, setShowForm }) {
           </option>
         ))}
       </select>
-      <button class="btn btn-large">Post</button>
+      <button class="btn btn-large" disabled={isUploading}>
+        Post
+      </button>
     </form>
   );
 }
