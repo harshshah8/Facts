@@ -1,4 +1,5 @@
-import "./style.css"
+import { useState } from "react";
+import "./style.css";
 
 const CATEGORIES = [
   { name: "technology", color: "#3b82f6" },
@@ -45,81 +46,116 @@ const initialFacts = [
   },
 ];
 
+function Counter() {
+  const [count, setCount] = useState(0);
 
-function App(){
-  return(<> 
-  <header className="header">
-  <div className="logo">
-    <img
-      src="logo.png"
-      height="68"
-      width="68"
-      alt="Today I Learned Logo"/>
-    <h1>Today I Learned</h1>
-  </div>
-  <button className="btn btn-large btn-open">Share a fact</button>
-</header>
-<NewFactForm/>
-<main className="main">
-  <CategoryFilter/>
-  <FactList/>
-</main>
-</>
-)
+  return (
+    <div>
+      <span style={{ fontSize: "40px" }}>{count}</span>
+      <button className="btn btn-large" onClick={() => setCount((c) => c + 1)}>
+        +1
+      </button>
+    </div>
+  );
+}
+
+function App() {
+  const [showForm, setShowForm] = useState(false);
+
+  return (
+    <>
+      <header className="header">
+        <div className="logo">
+          <img
+            src="logo.png"
+            height="68"
+            width="68"
+            alt="Today I Learned Logo"
+          />
+          <h1>Today I Learned</h1>
+        </div>
+
+        <button
+          className="btn btn-large btn-open"
+          onClick={() => setShowForm(!showForm)}
+        >
+          Share a fact
+        </button>
+      </header>
+      {showForm ? <NewFactForm /> : null}
+
+      <main className="main">
+        <CategoryFilter />
+        <FactList />
+      </main>
+    </>
+  );
 }
 
 function NewFactForm() {
-  return <form className="fact-form">fact form</form>
+  return <form className="fact-form">fact form</form>;
 }
 
 function CategoryFilter() {
-  return <aside><ul>
-      <li className="category">
+  return (
+    <aside>
+      <ul>
+        <li className="category">
           <button className="btn btn-all-categories">All</button>
-      </li>
-    {CATEGORIES.map((cat)=><li key={cat.name} className="category">
-              <button
-                className="btn btn-category"
-                style={{backgroundColor: cat.color}}
-              >
-                {cat.name}
-              </button>
-            </li>
-    )}
-    </ul></aside>
+        </li>
+        {CATEGORIES.map((cat) => (
+          <li key={cat.name} className="category">
+            <button
+              className="btn btn-category"
+              style={{ backgroundColor: cat.color }}
+            >
+              {cat.name}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </aside>
+  );
 }
 
-function Fact({fact}){
-
-  return <li className="fact">
-  <p>
-    {fact.text}
-    <a
-      className="source"
-      href={fact.source}
-      target="_blank"
-      >(Source)</a
-    >
-  </p>
-  <span className="tag" style={{backgroundColor:CATEGORIES.find((cat)=>cat.name === fact.category).color}}
-    >{fact.category}</span
-  >
-  <div className="vote-buttons">
-    <button>👍 {fact.votesInteresting}</button>
-    <button>🤯 {fact.votesMindblowing}</button>
-    <button>⛔️ {fact.votesFalse}</button>
-  </div>
-</li>
+function Fact({ fact }) {
+  return (
+    <li className="fact">
+      <p>
+        {fact.text}
+        <a className="source" href={fact.source} target="_blank">
+          (Source)
+        </a>
+      </p>
+      <span
+        className="tag"
+        style={{
+          backgroundColor: CATEGORIES.find((cat) => cat.name === fact.category)
+            .color,
+        }}
+      >
+        {fact.category}
+      </span>
+      <div className="vote-buttons">
+        <button>👍 {fact.votesInteresting}</button>
+        <button>🤯 {fact.votesMindblowing}</button>
+        <button>⛔️ {fact.votesFalse}</button>
+      </div>
+    </li>
+  );
 }
 
-function FactList(){
+function FactList() {
   const facts = initialFacts;
-  return <section>
-    <ul className="facts-list">{
-      facts.map((fact)=> <Fact key={fact.id} fact={fact}/>)
-    }
-    </ul>
-  </section>
+  return (
+    <section>
+      <ul className="facts-list">
+        {facts.map((fact) => (
+          <Fact key={fact.id} fact={fact} />
+        ))}
+      </ul>
+    </section>
+  );
 }
 
 export default App;
