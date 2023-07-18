@@ -1,4 +1,4 @@
-import "./style.css";
+import "./style.css"
 
 const CATEGORIES = [
   { name: "technology", color: "#3b82f6" },
@@ -73,33 +73,50 @@ function NewFactForm() {
 }
 
 function CategoryFilter() {
-  return <aside>Category</aside>
+  return <aside><ul>
+      <li className="category">
+          <button className="btn btn-all-categories">All</button>
+      </li>
+    {CATEGORIES.map((cat)=><li key={cat.name} className="category">
+              <button
+                className="btn btn-category"
+                style={{backgroundColor: cat.color}}
+              >
+                {cat.name}
+              </button>
+            </li>
+    )}
+    </ul></aside>
+}
+
+function Fact({fact}){
+
+  return <li className="fact">
+  <p>
+    {fact.text}
+    <a
+      className="source"
+      href={fact.source}
+      target="_blank"
+      >(Source)</a
+    >
+  </p>
+  <span className="tag" style={{backgroundColor:CATEGORIES.find((cat)=>cat.name === fact.category).color}}
+    >{fact.category}</span
+  >
+  <div className="vote-buttons">
+    <button>👍 {fact.votesInteresting}</button>
+    <button>🤯 {fact.votesMindblowing}</button>
+    <button>⛔️ {fact.votesFalse}</button>
+  </div>
+</li>
 }
 
 function FactList(){
   const facts = initialFacts;
-  const categories = CATEGORIES;
   return <section>
     <ul className="facts-list">{
-      facts.map((fact)=><li className="fact">
-      <p>
-        {fact.text}
-        <a
-          className="source"
-          href={fact.source}
-          target="_blank"
-          >(Source)</a
-        >
-      </p>
-      <span className="tag" style={{backgroundColor:categories.find((cat)=>cat.name === fact.category).color}}
-        >{fact.category}</span
-      >
-      <div className="vote-buttons">
-        <button>👍 {fact.votesInteresting}</button>
-        <button>🤯 {fact.votesMindblowing}</button>
-        <button>⛔️ {fact.votesFalse}</button>
-      </div>
-    </li>)
+      facts.map((fact)=> <Fact key={fact.id} fact={fact}/>)
     }
     </ul>
   </section>
